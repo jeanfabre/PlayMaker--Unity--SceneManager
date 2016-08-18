@@ -1,4 +1,5 @@
 // (c) Copyright HutongGames, LLC 2010-2016. All rights reserved.
+
 #if UNITY_5_3_OR_NEWER
 
 using System;
@@ -7,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 namespace HutongGames.PlayMaker.Actions
 {
-	[ActionCategory(ActionCategory.Level)]
+	[ActionCategory("SceneManager")]
 	[Tooltip("Get a scene path.")]
 	public class GetScenePath : GetSceneActionBase
 	{
@@ -44,6 +45,8 @@ namespace HutongGames.PlayMaker.Actions
 			if (!path.IsNone) {
 				path.Value = _scene.path;
 			}
+
+			Fsm.Event(foundEvent);
 		}
 	}
 }

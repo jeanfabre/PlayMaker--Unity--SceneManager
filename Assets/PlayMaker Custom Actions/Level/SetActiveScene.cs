@@ -1,56 +1,111 @@
-// License: Attribution 4.0 International (CC BY 4.0)
-/*--- __ECO__ __PLAYMAKER__ __ACTION__ ---*/
-// Keywords: scenemanager,scene manager, Set Active Scene
-// require minimum 5.3
+// (c) Copyright HutongGames, LLC 2010-2016. All rights reserved.
 
-using UnityEngine;
-using System;
 #if UNITY_5_3_OR_NEWER
+
+using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
-#endif
 
 namespace HutongGames.PlayMaker.Actions
 {
-	[ActionCategory(ActionCategory.Level)]
+	[ActionCategory("SceneManager")]
 	[Tooltip("Set the scene to be active.")]
-	[HelpUrl("http://hutonggames.com/playmakerforum/index.php?topic=12649.0")]
 	public class SetActiveScene : FsmStateAction
 	{
-		[ActionSection("Setup")]
-		[RequiredField]
-		[Tooltip("Scene name")]
-		public FsmString name;
-	
+		
+		[Tooltip("The reference options of the Scene")]
+		public GetSceneActionBase.SceneReferenceOptions sceneReference;
 
-		private Scene sceneTarget;
+		[Tooltip("The path of the scene to load.")]
+		public FsmString sceneByPath;
+
+		[Tooltip("The name of the scene to load.")]
+		public FsmString sceneByName;
+
+		[Tooltip("The index of the scene to load.")]
+		public FsmInt sceneAtIndex;
+
+
+		[ActionSection("Result")]
+
+		[Tooltip("True if set active succedded")]
+		[UIHint(UIHint.Variable)]
+		public FsmBool success;
+
+		[Tooltip("Event sent if setActive succedded ")]
+		public FsmEvent successEvent;
+
+		[Tooltip("Event sent if scene not loaded yet")]
+		[UIHint(UIHint.Variable)]
+		public FsmEvent sceneNotLoadedEvent;
+
+		[Tooltip("Event sent if SceneReference do not resolve to a scene")]
+		public FsmEvent sceneNotFoundEvent;
+
+		Scene _scene;
+		bool _sceneFound;
 
 		public override void Reset()
 		{
-			name = null;
+			sceneReference = GetSceneActionBase.SceneReferenceOptions.SceneAtIndex;
+			sceneByPath = null;
+			sceneByName = null;
+			sceneAtIndex = null;
+
+			success = null;
+			successEvent = null;
+			sceneNotLoadedEvent = null;
+			sceneNotFoundEvent = null;
 		}
 
 		public override void OnEnter()
 		{
+			GetScene ();
 
-			#if UNITY_5_3_OR_NEWER
-		
+			if (_sceneFound) {
 
-			sceneTarget = SceneManager.GetSceneByName(name.Value);
-
-			Debug.Log(sceneTarget.name);
-
-			SceneManager.SetActiveScene(sceneTarget);
+				bool _result = SceneManager.SetActiveScene (_scene);
+				if (!success.IsNone)  success.Value = _result;
+				if (!_result) {
+					Fsm.Event (sceneNotLoadedEvent);
+				} else {
+					Fsm.Event(successEvent);
+				}
+					
+			}
 
 			Finish();
-
-	
-
-			#else
-			isLoaded.Value = false;
-			Debug.LogWarning("<b>[SetActiveScene]</b><color=#FF9900ff> Need minimum unity5.3 !</color>", this.Owner);
-			Finish ();
-			#endif
 		}
-			
+
+		void GetScene()
+		{
+			try{
+				switch (sceneReference) {
+				case GetSceneActionBase.SceneReferenceOptions.SceneAtIndex:
+					_scene = SceneManager.GetSceneAt (sceneAtIndex.Value);	
+					break;
+				case GetSceneActionBase.SceneReferenceOptions.SceneByName:
+					_scene = SceneManager.GetSceneByName (sceneByName.Value);
+					break;
+				case GetSceneActionBase.SceneReferenceOptions.SceneByPath:
+					_scene = SceneManager.GetSceneByPath (sceneByPath.Value);
+					break;
+				}
+			}catch(Exception e) {
+				LogError (e.Message);
+			}
+
+			if (_scene == new Scene()) {
+				_sceneFound = false;
+				if (!success.IsNone) success.Value = false;
+				Fsm.Event(sceneNotFoundEvent);
+			} else {
+				_sceneFound = true;
+			}
+
+		}
+
 	}
 }
+
+#endif

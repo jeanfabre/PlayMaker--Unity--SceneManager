@@ -23,15 +23,15 @@ public class GetSceneActionBaseCustomEditor : CustomActionEditor {
 		EditField ("sceneReference");
 
 		switch (_action.sceneReference) {
-		case GetSceneActionBase.SceneReferenceOptions.ActiveScene:
+		case GetSceneActionBase.SceneAllReferenceOptions.ActiveScene:
 			break;
-		case GetSceneActionBase.SceneReferenceOptions.SceneAtIndex:
+		case GetSceneActionBase.SceneAllReferenceOptions.SceneAtIndex:
 			EditField ("sceneAtIndex");
 			break;
-		case GetSceneActionBase.SceneReferenceOptions.SceneByName:
+		case GetSceneActionBase.SceneAllReferenceOptions.SceneByName:
 			EditField ("sceneByName");
 			break;
-		case GetSceneActionBase.SceneReferenceOptions.SceneByPath:
+		case GetSceneActionBase.SceneAllReferenceOptions.SceneByPath:
 			EditField ("sceneByPath");
 			break;
 		}

@@ -1,4 +1,5 @@
 ﻿// (c) Copyright HutongGames, LLC 2010-2016. All rights reserved.
+
 #if UNITY_5_3_OR_NEWER
 
 using System;
@@ -9,7 +10,10 @@ namespace HutongGames.PlayMaker.Actions
 {
 	public abstract class GetSceneActionBase : FsmStateAction
 	{
-		public enum SceneReferenceOptions {ActiveScene,SceneAtIndex,SceneByName,SceneByPath};
+		public enum SceneReferenceOptions {SceneAtIndex,SceneByName,SceneByPath};
+		public enum SceneSimpleReferenceOptions {SceneAtIndex,SceneByName};
+		public enum SceneAllReferenceOptions {ActiveScene,SceneAtIndex,SceneByName,SceneByPath};
+
 
 		[Tooltip("The Scene Cache")]
 		protected Scene _scene;
@@ -18,7 +22,7 @@ namespace HutongGames.PlayMaker.Actions
 		protected bool _sceneFound;
 
 		[Tooltip("The reference option of the Scene")]
-		public SceneReferenceOptions sceneReference;
+		public SceneAllReferenceOptions sceneReference;
 
 		[Tooltip("The scene Index.")]
 		public FsmInt sceneAtIndex;
@@ -29,20 +33,21 @@ namespace HutongGames.PlayMaker.Actions
 		[Tooltip("The scene Path.")]
 		public FsmString sceneByPath;
 
-		[Tooltip("True if index resolves to a scene")]
+		[Tooltip("True if SceneReference resolves to a scene")]
+		[UIHint(UIHint.Variable)]
 		public FsmBool found;
 
-		[Tooltip("Event sent if index resolves to a scene")]
+		[Tooltip("Event sent if SceneReference resolves to a scene")]
 		public FsmEvent foundEvent;
 
-		[Tooltip("Event sent if index do not resolve to a scene")]
+		[Tooltip("Event sent if SceneReference do not resolve to a scene")]
 		public FsmEvent notFoundEvent;
 
 		public override void Reset()
 		{
 			base.Reset ();
 
-			sceneReference = SceneReferenceOptions.ActiveScene;
+			sceneReference = SceneAllReferenceOptions.ActiveScene;
 
 			sceneAtIndex = null;
 			sceneByName = null;
@@ -57,16 +62,16 @@ namespace HutongGames.PlayMaker.Actions
 		{
 			try{
 				switch (sceneReference) {
-				case SceneReferenceOptions.ActiveScene:
+				case SceneAllReferenceOptions.ActiveScene:
 					_scene = SceneManager.GetActiveScene ();
 					break;
-				case SceneReferenceOptions.SceneAtIndex:
+				case SceneAllReferenceOptions.SceneAtIndex:
 					_scene = SceneManager.GetSceneAt (sceneAtIndex.Value);	
 					break;
-				case SceneReferenceOptions.SceneByName:
+				case SceneAllReferenceOptions.SceneByName:
 					_scene = SceneManager.GetSceneByName (sceneByName.Value);
 					break;
-				case SceneReferenceOptions.SceneByPath:
+				case SceneAllReferenceOptions.SceneByPath:
 					_scene = SceneManager.GetSceneByPath (sceneByPath.Value);
 					break;
 				}
@@ -85,7 +90,6 @@ namespace HutongGames.PlayMaker.Actions
 				if (!found.IsNone) {
 					found.Value = true;
 				}
-				Fsm.Event(foundEvent);
 			}
 		}
 	}

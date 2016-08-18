@@ -7,16 +7,18 @@ using UnityEditor;
 using HutongGames.PlayMaker.Actions;
 using HutongGames.PlayMakerEditor;
 
-[CustomActionEditor(typeof(GetSceneName))]
-public class GetSceneNameCustomEditor : GetSceneActionBaseCustomEditor
+[CustomActionEditor(typeof(GetSceneIsLoaded))]
+public class GetSceneIsLoadedCustomEditor : GetSceneActionBaseCustomEditor
 {
 	public override bool OnGUI()
 	{
 		bool changed = EditSceneReferenceField();
 
-		EditField("name");
+		EditField("isLoaded");
+		EditField("isLoadedEvent");
+		EditField("isNotLoadedEvent");
 
-		EditSceneReferenceResultFields ();
+		EditSceneReferenceResultFields();
 
 		return GUI.changed || changed;
 	}

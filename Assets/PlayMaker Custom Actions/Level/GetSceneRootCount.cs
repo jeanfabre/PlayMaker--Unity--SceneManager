@@ -1,4 +1,5 @@
 // (c) Copyright HutongGames, LLC 2010-2016. All rights reserved.
+
 #if UNITY_5_3_OR_NEWER
 
 using System;
@@ -7,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 namespace HutongGames.PlayMaker.Actions
 {
-	[ActionCategory(ActionCategory.Level)]
+	[ActionCategory("SceneManager")]
 	[Tooltip("Get a scene RootCount, the number of root transforms of this scene.")]
 	public class GetSceneRootCount : GetSceneActionBase
 	{
@@ -44,6 +45,8 @@ namespace HutongGames.PlayMaker.Actions
 			if (!rootCount.IsNone) {
 				rootCount.Value = _scene.rootCount;
 			}
+
+			Fsm.Event(foundEvent);
 		}
 	}
 }

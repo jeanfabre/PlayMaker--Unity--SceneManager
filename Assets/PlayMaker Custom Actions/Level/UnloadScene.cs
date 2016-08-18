@@ -1,63 +1,59 @@
-// License: Attribution 4.0 International (CC BY 4.0)
-/*--- __ECO__ __PLAYMAKER__ __ACTION__ ---*/
-// Keywords: scenemanager,scene manager, Unload Scene
-// require minimum 5.3
+// (c) Copyright HutongGames, LLC 2010-2016. All rights reserved.
 
-using UnityEngine;
-using System;
 #if UNITY_5_3_OR_NEWER
+
+using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
-#endif
 
 namespace HutongGames.PlayMaker.Actions
 {
-	[ActionCategory(ActionCategory.Level)]
-	[Tooltip("Unloads all GameObjects associated with the given scene. Note that assets are currently not unloaded, in order to free up asset memory call Resources.UnloadAllUnusedAssets")]
-	[HelpUrl("http://hutonggames.com/playmakerforum/index.php?topic=12649.0")]
-	public class UnloadScene : FsmStateAction
+	[ActionCategory("SceneManager")]
+	[Tooltip("Unload Seene. Note that assets are currently not unloaded, in order to free up asset memory call Resources.UnloadUnusedAssets.")]
+	public class UnloadScene : GetSceneActionBase
 	{
-		[ActionSection("Setup")]
-		[RequiredField]
-		[Tooltip("Scene name")]
-		public FsmString name;
-		public FsmBool isUnloaded;
-	
-		private Scene sceneTarget;
+
+		[ActionSection("Result")]
+
+		[Tooltip("True if scene was unloaded")]
+		[UIHint(UIHint.Variable)]
+		public FsmBool unloaded;
+
+		[Tooltip("Event sent if scene was unloaded ")]
+		public FsmEvent unloadedEvent;
+
+		[Tooltip("Event sent scene was not unloaded")]
+		[UIHint(UIHint.Variable)]
+		public FsmEvent failureEvent;
 
 		public override void Reset()
 		{
-			name = null;
-			isUnloaded = false;
+			base.Reset ();
+			unloaded = null;
+			unloadedEvent = null;
+			failureEvent = null;
 		}
 
 		public override void OnEnter()
 		{
+			base.OnEnter ();
+			if (_sceneFound) {
+				
+				bool _unloaded = SceneManager.UnloadScene (_scene);
 
-			#if UNITY_5_3_OR_NEWER
+				if (!unloaded.IsNone) unloaded.Value = _unloaded;
 
-			isUnloaded.Value = false;
-
-			isUnloaded.Value = SceneManager.UnloadScene(name.Value);
-
-			if (isUnloaded.Value == true){
-				Finish();
-			}
-	
-
-			#else
-			isLoaded.Value = false;
-			Debug.LogWarning("<b>[UnloadScene]</b><color=#FF9900ff> Need minimum unity5.3 !</color>", this.Owner);
-			Finish ();
-			#endif
-		}
-
-		public override void OnUpdate()
-		{
-			isUnloaded.Value = SceneManager.UnloadScene(name.Value);
-			if (isUnloaded.Value == true){
-				Finish();
+				if (_unloaded) {
+					Fsm.Event (unloadedEvent);
+				} else {
+					Fsm.Event (failureEvent);
+				}
 			}
 
+			Finish();
 		}
+
 	}
 }
+
+#endif

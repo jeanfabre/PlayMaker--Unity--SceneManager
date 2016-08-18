@@ -9,14 +9,10 @@ using UnityEngine.SceneManagement;
 namespace HutongGames.PlayMaker.Actions
 {
 	[ActionCategory("SceneManager")]
-	[Tooltip("Move a GameObject from its current scene to a new scene. It is required that the GameObject is at the root of its current scene.")]
-	public class MoveGameObjectToScene : FsmStateAction
+	[Tooltip("Loads the scene by its name or index in Build Settings. ")]
+	public class LoadScene : FsmStateAction
 	{
-
-		[RequiredField]
-		[Tooltip("The Root GameObject to move to the referenced scene")]
-		public FsmOwnerDefault gameObject;
-
+		
 		[Tooltip("The reference options of the Scene")]
 		public GetSceneActionBase.SceneSimpleReferenceOptions sceneReference;
 
@@ -26,29 +22,35 @@ namespace HutongGames.PlayMaker.Actions
 		[Tooltip("The index of the scene to load.")]
 		public FsmInt sceneAtIndex;
 
+		[Tooltip("If true, Load Scene asynchronously.")]
+		public FsmBool asynch;
+
+		[Tooltip("Allows you to specify whether or not to load the scene additively. See LoadSceneMode Unity doc for more information about the options.")]
+		[ObjectType(typeof(LoadSceneMode))]
+		public FsmEnum loadSceneMode;
+
 		[ActionSection("Result")]
 
 		[Tooltip("True if SceneReference resolves to a scene")]
 		[UIHint(UIHint.Variable)]
-		public FsmBool sceneFound;
+		public FsmBool found;
 
 		[Tooltip("Event sent if SceneReference resolves to a scene")]
-		public FsmEvent sceneFoundEvent;
+		public FsmEvent foundEvent;
 
 		[Tooltip("Event sent if SceneReference do not resolve to a scene")]
-		public FsmEvent sceneNotFoundEvent;
+		public FsmEvent notFoundEvent;
 
 		Scene _scene;
 		bool _sceneFound;
 
 		public override void Reset()
 		{
-			gameObject = null;
-
 			sceneReference = GetSceneActionBase.SceneSimpleReferenceOptions.SceneAtIndex;
 			sceneByName = null;
 			sceneAtIndex = null;
-
+			asynch = null;
+			loadSceneMode = null;
 		}
 
 		public override void OnEnter()
@@ -56,10 +58,22 @@ namespace HutongGames.PlayMaker.Actions
 			GetScene ();
 
 			if (_sceneFound) {
+				
+				if (asynch.Value) {
+					if (sceneReference == GetSceneActionBase.SceneSimpleReferenceOptions.SceneAtIndex) {
+						SceneManager.LoadSceneAsync(sceneAtIndex.Value, (LoadSceneMode)loadSceneMode.Value);
+					} else {
+						SceneManager.LoadSceneAsync(sceneByName.Value, (LoadSceneMode)loadSceneMode.Value);
+					}
+				} else {
+					if (sceneReference == GetSceneActionBase.SceneSimpleReferenceOptions.SceneAtIndex) {
+						SceneManager.LoadScene(sceneAtIndex.Value, (LoadSceneMode)loadSceneMode.Value);
+					} else {
+						SceneManager.LoadScene(sceneByName.Value, (LoadSceneMode)loadSceneMode.Value);
+					}
+				}
 
-				SceneManager.MoveGameObjectToScene(Fsm.GetOwnerDefaultTarget (gameObject), _scene);
-
-				Fsm.Event(sceneFoundEvent);
+				Fsm.Event(foundEvent);
 			}
 
 			Finish();
@@ -82,14 +96,14 @@ namespace HutongGames.PlayMaker.Actions
 
 			if (_scene == new Scene()) {
 				_sceneFound = false;
-				if (!sceneFound.IsNone) {
-					sceneFound.Value = false;
+				if (!found.IsNone) {
+					found.Value = false;
 				}
-				Fsm.Event(sceneNotFoundEvent);
+				Fsm.Event(notFoundEvent);
 			} else {
 				_sceneFound = true;
-				if (!sceneFound.IsNone) {
-					sceneFound.Value = true;
+				if (!found.IsNone) {
+					found.Value = true;
 				}
 
 			}

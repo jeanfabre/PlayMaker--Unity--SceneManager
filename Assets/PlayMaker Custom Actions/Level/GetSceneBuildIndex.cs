@@ -1,14 +1,14 @@
 // (c) Copyright HutongGames, LLC 2010-2016. All rights reserved.
+
 #if UNITY_5_3_OR_NEWER
 
 using System;
 using UnityEngine;
-
 using UnityEngine.SceneManagement;
 
 namespace HutongGames.PlayMaker.Actions
 {
-	[ActionCategory(ActionCategory.Level)]
+	[ActionCategory("SceneManager")]
 	[Tooltip("Returns the index of a scene in the Build Settings. Always returns -1 if the scene was loaded through an AssetBundle.")]
 	public class GetSceneBuildIndex : GetSceneActionBase
 	{
@@ -46,6 +46,8 @@ namespace HutongGames.PlayMaker.Actions
 			if (!buildIndex.IsNone) {
 				buildIndex.Value = _scene.buildIndex;
 			}
+
+			Fsm.Event(foundEvent);
 		}
 	}
 }

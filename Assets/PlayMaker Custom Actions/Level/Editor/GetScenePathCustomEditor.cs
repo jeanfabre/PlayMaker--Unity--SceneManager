@@ -7,14 +7,14 @@ using UnityEditor;
 using HutongGames.PlayMaker.Actions;
 using HutongGames.PlayMakerEditor;
 
-[CustomActionEditor(typeof(GetSceneName))]
-public class GetSceneNameCustomEditor : GetSceneActionBaseCustomEditor
+[CustomActionEditor(typeof(GetScenePath))]
+public class GetScenePathCustomEditor : GetSceneActionBaseCustomEditor
 {
 	public override bool OnGUI()
 	{
 		bool changed = EditSceneReferenceField();
 
-		EditField("name");
+		EditField("path");
 
 		EditSceneReferenceResultFields ();
 
