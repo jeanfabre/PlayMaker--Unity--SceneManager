@@ -75,7 +75,7 @@ namespace HutongGames.PlayMaker.Actions
 				if (SceneManager.GetActiveScene ().buildIndex == sceneAtIndex.Value) {
 					return false;
 				} else {
-					SceneManager.LoadScene (sceneAtIndex.Value, (LoadSceneMode)loadSceneMode.Value);
+					SceneManager.LoadScene(sceneAtIndex.Value, (LoadSceneMode)loadSceneMode.Value);
 				}
 
 			} else {

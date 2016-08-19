@@ -12,7 +12,8 @@ namespace HutongGames.PlayMaker.Actions
 	{
 		public enum SceneReferenceOptions {SceneAtIndex,SceneByName,SceneByPath};
 		public enum SceneSimpleReferenceOptions {SceneAtIndex,SceneByName};
-		public enum SceneAllReferenceOptions {ActiveScene,SceneAtIndex,SceneByName,SceneByPath};
+		public enum SceneBuildReferenceOptions {SceneAtBuildIndex,SceneByName};
+		public enum SceneAllReferenceOptions {ActiveScene,SceneAtIndex,SceneByName,SceneByPath,SceneByGameObject};
 
 
 		[Tooltip("The Scene Cache")]
@@ -33,6 +34,10 @@ namespace HutongGames.PlayMaker.Actions
 		[Tooltip("The scene Path.")]
 		public FsmString sceneByPath;
 
+		[Tooltip("The Scene of GameObject")]
+		public FsmOwnerDefault sceneByGameObject;
+
+
 		[Tooltip("True if SceneReference resolves to a scene")]
 		[UIHint(UIHint.Variable)]
 		public FsmBool found;
@@ -52,6 +57,7 @@ namespace HutongGames.PlayMaker.Actions
 			sceneAtIndex = null;
 			sceneByName = null;
 			sceneByPath = null;
+			sceneByGameObject = null;
 
 			found = null;
 			foundEvent = null;
@@ -73,6 +79,15 @@ namespace HutongGames.PlayMaker.Actions
 					break;
 				case SceneAllReferenceOptions.SceneByPath:
 					_scene = SceneManager.GetSceneByPath (sceneByPath.Value);
+					break;
+				case SceneAllReferenceOptions.SceneByGameObject:
+					GameObject _go = Fsm.GetOwnerDefaultTarget (sceneByGameObject);
+					if (_go==null)
+					{
+						throw new  Exception ("Null GameObject");
+					}else{
+						_scene =_go.scene;
+					}
 					break;
 				}
 			}catch(Exception e) {

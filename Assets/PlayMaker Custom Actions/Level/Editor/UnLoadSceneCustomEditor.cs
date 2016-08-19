@@ -18,15 +18,27 @@ public class UnloadSceneCustomEditor : CustomActionEditor
 
 		EditField ("sceneReference");
 
-		if (_target.sceneReference == GetSceneActionBase.SceneSimpleReferenceOptions.SceneAtIndex) {
+		switch (_target.sceneReference) {
+		case UnloadScene.SceneReferenceOptions.ActiveScene:
+			break;
+		case UnloadScene.SceneReferenceOptions.SceneAtIndex:
 			EditField ("sceneAtIndex");
-		} else {
+			break;
+		case UnloadScene.SceneReferenceOptions.SceneAtBuildIndex:
+			EditField ("sceneAtBuildIndex");
+			break;
+		case UnloadScene.SceneReferenceOptions.SceneByName:
 			EditField ("sceneByName");
+			break;
+		case UnloadScene.SceneReferenceOptions.SceneByGameObject:
+			EditField ("sceneByGameObject");
+			break;
 		}
+
 
 		EditField("unloaded");
 		EditField("unloadedEvent");
-		EditField("failureEventEvent");
+		EditField("failureEvent");
 
 		return GUI.changed;
 	}

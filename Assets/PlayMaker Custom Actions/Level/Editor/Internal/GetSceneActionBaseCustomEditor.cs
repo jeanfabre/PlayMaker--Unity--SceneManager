@@ -34,6 +34,9 @@ public class GetSceneActionBaseCustomEditor : CustomActionEditor {
 		case GetSceneActionBase.SceneAllReferenceOptions.SceneByPath:
 			EditField ("sceneByPath");
 			break;
+		case GetSceneActionBase.SceneAllReferenceOptions.SceneByGameObject:
+			EditField ("sceneByGameObject");
+			break;
 		}
 			
 		return GUI.changed;
