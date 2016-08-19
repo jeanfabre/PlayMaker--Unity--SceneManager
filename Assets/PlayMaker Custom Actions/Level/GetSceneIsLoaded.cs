@@ -15,6 +15,7 @@ namespace HutongGames.PlayMaker.Actions
 		[ActionSection("Result")]
 
 		[Tooltip("true if the scene is loaded.")]
+		[UIHint(UIHint.Variable)]
 		public FsmBool isLoaded;
 
 		[Tooltip("Event sent if the scene is loaded.")]

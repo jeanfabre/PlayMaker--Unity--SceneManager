@@ -8,7 +8,7 @@ using HutongGames.PlayMaker.Actions;
 using HutongGames.PlayMakerEditor;
 
 [CustomActionEditor(typeof(LoadScene))]
-public class loadSceneCustomEditor : CustomActionEditor
+public class LoadSceneCustomEditor : CustomActionEditor
 {
 	LoadScene _target ;
 

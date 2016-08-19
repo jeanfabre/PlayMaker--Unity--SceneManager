@@ -10,85 +10,158 @@ namespace HutongGames.PlayMaker.Actions
 {
 	[ActionCategory("SceneManager")]
 	[Tooltip("This will merge the source scene into the destinationScene. This function merges the contents of the source scene into the destination scene, and deletes the source scene. All GameObjects at the root of the source scene are moved to the root of the destination scene. NOTE: This function is destructive: The source scene will be destroyed once the merge has been completed.")]
-	public class MergeScenes : GetSceneActionBase
+	public class MergeScenes : FsmStateAction
 	{
-		
-		[Tooltip("The reference options of the Scene")]
-		public GetSceneActionBase.SceneAllReferenceOptions scene2Reference;
 
-		[Tooltip("The scene Index.")]
-		public FsmInt scene2AtIndex;
+		[ActionSection("Source")]
+		[Tooltip("The reference options of the source Scene")]
+		public GetSceneActionBase.SceneAllReferenceOptions sourceReference;
 
-		[Tooltip("The scene Name.")]
-		public FsmString scene2ByName;
+		[Tooltip("The destination scene Index.")]
+		public FsmInt sourceAtIndex;
 
-		[Tooltip("The scene Path.")]
-		public FsmString scene2ByPath;
+		[Tooltip("The destination scene Name.")]
+		public FsmString sourceByName;
 
+		[Tooltip("The destination scene Path.")]
+		public FsmString sourceByPath;
 
-		Scene _scene2;
-		bool _scene2Found;
+		[ActionSection("Destination")]
+		[Tooltip("The reference options of the destination Scene")]
+		public GetSceneActionBase.SceneAllReferenceOptions destinationReference;
+
+		[Tooltip("The destination scene Index.")]
+		public FsmInt destinationAtIndex;
+
+		[Tooltip("The destination scene Name.")]
+		public FsmString destinationByName;
+
+		[Tooltip("The destination scene Path.")]
+		public FsmString destinationByPath;
+
+		[ActionSection("Result")]
+		[Tooltip("True if the merge succeeded")]
+		[UIHint(UIHint.Variable)]
+		public FsmBool success;
+
+		[Tooltip("Event sent if merge succeeded")]
+		public FsmEvent successEvent;
+
+		[Tooltip("Event sent if merge failed")]
+		public FsmEvent failureEvent;
+
+		Scene _sourceScene;
+		bool _sourceFound;
+
+		Scene _destinationScene;
+		bool _destinationFound;
 
 		public override void Reset()
 		{
-			scene2Reference = GetSceneActionBase.SceneAllReferenceOptions.SceneAtIndex;
-			scene2ByPath = null;
-			scene2ByName = null;
-			scene2AtIndex = null;
+			sourceReference = GetSceneActionBase.SceneAllReferenceOptions.SceneAtIndex;
+			sourceByPath = null;
+			sourceByName = null;
+			sourceAtIndex = null;
 
+			destinationReference = GetSceneActionBase.SceneAllReferenceOptions.ActiveScene;
+			destinationByPath = null;
+			destinationByName = null;
+			destinationAtIndex = null;
+
+			success = null;
+			successEvent = null;
+			failureEvent = null;
 		}
 
 		public override void OnEnter()
 		{
-			GetScene2 ();
+			GetSourceScene();
+			GetDestinationScene ();
 
-			if (_sceneFound) {
+			if (_destinationFound && _sourceFound) {
 
-				SceneManager.MergeScenes (_scene, _scene2);
+				if (_destinationScene.Equals(_sourceScene))
+				{
+					LogError("Source and Destination scenes can not be the same");
+				}else{
+					SceneManager.MergeScenes (_sourceScene, _destinationScene);
+				}
+				success.Value = true;
+				Fsm.Event(successEvent);
+			} else {
+				success.Value = false;
 
-				Fsm.Event(foundEvent);
+				Fsm.Event(failureEvent);
 			}
+
 
 			Finish();
 		}
 
-		void GetScene2()
+		void GetSourceScene()
 		{
 			try{
-				switch (scene2Reference) {
-				case SceneAllReferenceOptions.ActiveScene:
-					_scene2 = SceneManager.GetActiveScene ();
+				switch (sourceReference) {
+				case GetSceneActionBase.SceneAllReferenceOptions.ActiveScene:
+					_sourceScene = SceneManager.GetActiveScene ();
 					break;
-				case SceneAllReferenceOptions.SceneAtIndex:
-					_scene2 = SceneManager.GetSceneAt (scene2AtIndex.Value);	
+				case GetSceneActionBase.SceneAllReferenceOptions.SceneAtIndex:
+					_sourceScene = SceneManager.GetSceneAt (sourceAtIndex.Value);	
 					break;
-				case SceneAllReferenceOptions.SceneByName:
-					_scene2 = SceneManager.GetSceneByName (scene2ByName.Value);
+				case GetSceneActionBase.SceneAllReferenceOptions.SceneByName:
+					_sourceScene = SceneManager.GetSceneByName (sourceByName.Value);
 					break;
-				case SceneAllReferenceOptions.SceneByPath:
-					_scene2 = SceneManager.GetSceneByPath (scene2ByPath.Value);
+				case GetSceneActionBase.SceneAllReferenceOptions.SceneByPath:
+					_sourceScene = SceneManager.GetSceneByPath (sourceByPath.Value);
 					break;
 				}
 			}catch(Exception e) {
 				LogError (e.Message);
 			}
 
-			if (_scene2 == new Scene()) {
-				_sceneFound = false;
-				if (!found.IsNone) {
-					found.Value = false;
-				}
-				Fsm.Event(notFoundEvent);
+			if (_sourceScene == new Scene()) {
+				_sourceFound = false;
 			} else {
-				_sceneFound = true;
-				if (!found.IsNone) {
-					found.Value = true;
+				_sourceFound = true;
+			}
+		}
+			
+		void GetDestinationScene()
+		{
+			try{
+				switch (sourceReference) {
+				case GetSceneActionBase.SceneAllReferenceOptions.ActiveScene:
+					_destinationScene = SceneManager.GetActiveScene ();
+					break;
+				case GetSceneActionBase.SceneAllReferenceOptions.SceneAtIndex:
+					_destinationScene = SceneManager.GetSceneAt (destinationAtIndex.Value);	
+					break;
+				case GetSceneActionBase.SceneAllReferenceOptions.SceneByName:
+					_destinationScene = SceneManager.GetSceneByName (destinationByName.Value);
+					break;
+				case GetSceneActionBase.SceneAllReferenceOptions.SceneByPath:
+					_destinationScene = SceneManager.GetSceneByPath (destinationByPath.Value);
+					break;
 				}
-	
+			}catch(Exception e) {
+				LogError (e.Message);
 			}
 
+			if (_destinationScene == new Scene()) {
+				_destinationFound = false;
+			} else {
+				_destinationFound = true;
+			}
 		}
 
+		public override string ErrorCheck()
+		{
+			if (sourceReference == GetSceneActionBase.SceneAllReferenceOptions.ActiveScene && destinationReference == GetSceneActionBase.SceneAllReferenceOptions.ActiveScene) {
+				return "Source and Destination scenes can not be the same";
+			}
+
+			return string.Empty;
+		}
 	}
 }
 

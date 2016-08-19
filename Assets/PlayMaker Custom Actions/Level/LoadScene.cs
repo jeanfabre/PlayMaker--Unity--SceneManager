@@ -22,24 +22,20 @@ namespace HutongGames.PlayMaker.Actions
 		[Tooltip("The index of the scene to load.")]
 		public FsmInt sceneAtIndex;
 
-		[Tooltip("If true, Load Scene asynchronously.")]
-		public FsmBool asynch;
-
 		[Tooltip("Allows you to specify whether or not to load the scene additively. See LoadSceneMode Unity doc for more information about the options.")]
 		[ObjectType(typeof(LoadSceneMode))]
 		public FsmEnum loadSceneMode;
 
 		[ActionSection("Result")]
 
-		[Tooltip("True if SceneReference resolves to a scene")]
-		[UIHint(UIHint.Variable)]
-		public FsmBool found;
+		[Tooltip("True if the scene was loaded")]
+		public FsmBool  success;
 
-		[Tooltip("Event sent if SceneReference resolves to a scene")]
-		public FsmEvent foundEvent;
+		[Tooltip("Event sent if the scene was loaded")]
+		public FsmEvent successEvent;
 
-		[Tooltip("Event sent if SceneReference do not resolve to a scene")]
-		public FsmEvent notFoundEvent;
+		[Tooltip("Event sent if a problem occured, check log for information")]
+		public FsmEvent failureEvent;
 
 		Scene _scene;
 		bool _sceneFound;
@@ -49,66 +45,51 @@ namespace HutongGames.PlayMaker.Actions
 			sceneReference = GetSceneActionBase.SceneSimpleReferenceOptions.SceneAtIndex;
 			sceneByName = null;
 			sceneAtIndex = null;
-			asynch = null;
 			loadSceneMode = null;
+
+			success = null;
+			successEvent = null;
+			failureEvent = null;
 		}
 
 		public override void OnEnter()
 		{
-			GetScene ();
 
-			if (_sceneFound) {
-				
-				if (asynch.Value) {
-					if (sceneReference == GetSceneActionBase.SceneSimpleReferenceOptions.SceneAtIndex) {
-						SceneManager.LoadSceneAsync(sceneAtIndex.Value, (LoadSceneMode)loadSceneMode.Value);
-					} else {
-						SceneManager.LoadSceneAsync(sceneByName.Value, (LoadSceneMode)loadSceneMode.Value);
-					}
-				} else {
-					if (sceneReference == GetSceneActionBase.SceneSimpleReferenceOptions.SceneAtIndex) {
-						SceneManager.LoadScene(sceneAtIndex.Value, (LoadSceneMode)loadSceneMode.Value);
-					} else {
-						SceneManager.LoadScene(sceneByName.Value, (LoadSceneMode)loadSceneMode.Value);
-					}
-				}
+			bool _result = DoLoadScene ();
 
-				Fsm.Event(foundEvent);
+			if(!success.IsNone)	success.Value = _result;
+
+			if (_result) {
+				Fsm.Event (successEvent);
+			} else {
+				Fsm.Event (failureEvent);
 			}
 
 			Finish();
 		}
 
-		void GetScene()
+		bool DoLoadScene()
 		{
-			try{
-				switch (sceneReference) {
-				case GetSceneActionBase.SceneSimpleReferenceOptions.SceneAtIndex:
-					_scene = SceneManager.GetSceneAt (sceneAtIndex.Value);	
-					break;
-				case GetSceneActionBase.SceneSimpleReferenceOptions.SceneByName:
-					_scene = SceneManager.GetSceneByName (sceneByName.Value);
-					break;
+			if (sceneReference == GetSceneActionBase.SceneSimpleReferenceOptions.SceneAtIndex)
+			{
+				if (SceneManager.GetActiveScene ().buildIndex == sceneAtIndex.Value) {
+					return false;
+				} else {
+					SceneManager.LoadScene (sceneAtIndex.Value, (LoadSceneMode)loadSceneMode.Value);
 				}
-			}catch(Exception e) {
-				LogError (e.Message);
-			}
 
-			if (_scene == new Scene()) {
-				_sceneFound = false;
-				if (!found.IsNone) {
-					found.Value = false;
-				}
-				Fsm.Event(notFoundEvent);
 			} else {
-				_sceneFound = true;
-				if (!found.IsNone) {
-					found.Value = true;
+				if (SceneManager.GetActiveScene ().name == sceneByName.Value) {
+					return false;
+				} else {
+					SceneManager.LoadScene (sceneByName.Value, (LoadSceneMode)loadSceneMode.Value);
 				}
-
 			}
-
+			return true;
 		}
+
+
+
 
 	}
 }
