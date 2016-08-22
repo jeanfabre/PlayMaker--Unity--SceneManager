@@ -31,6 +31,9 @@ public class MergeScenesCustomEditor : CustomActionEditor
 		case GetSceneActionBase.SceneAllReferenceOptions.SceneByPath:
 			EditField ("sourceByPath");
 			break;
+		case GetSceneActionBase.SceneAllReferenceOptions.SceneByGameObject:
+			EditField ("sourceByGameObject");
+			break;
 		}
 
 		EditField ("destinationReference");
@@ -47,7 +50,14 @@ public class MergeScenesCustomEditor : CustomActionEditor
 		case GetSceneActionBase.SceneAllReferenceOptions.SceneByPath:
 			EditField ("destinationByPath");
 			break;
+		case GetSceneActionBase.SceneAllReferenceOptions.SceneByGameObject:
+			EditField ("destinationByGameObject");
+			break;
 		}
+
+		EditField ("success");
+		EditField ("successEvent");
+		EditField ("failureEvent");
 
 		return GUI.changed;
 	}

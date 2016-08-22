@@ -12,7 +12,6 @@ namespace HutongGames.PlayMaker.Actions
 	[Tooltip("Loads the scene by its name or index in Build Settings. ")]
 	public class LoadScene : FsmStateAction
 	{
-		
 		[Tooltip("The reference options of the Scene")]
 		public GetSceneActionBase.SceneSimpleReferenceOptions sceneReference;
 

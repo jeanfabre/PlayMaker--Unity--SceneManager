@@ -15,13 +15,6 @@ namespace HutongGames.PlayMaker.Actions
 		public enum SceneBuildReferenceOptions {SceneAtBuildIndex,SceneByName};
 		public enum SceneAllReferenceOptions {ActiveScene,SceneAtIndex,SceneByName,SceneByPath,SceneByGameObject};
 
-
-		[Tooltip("The Scene Cache")]
-		protected Scene _scene;
-
-		[Tooltip("True if a scene was found, use _scene to access it")]
-		protected bool _sceneFound;
-
 		[Tooltip("The reference option of the Scene")]
 		public SceneAllReferenceOptions sceneReference;
 
@@ -37,7 +30,6 @@ namespace HutongGames.PlayMaker.Actions
 		[Tooltip("The Scene of GameObject")]
 		public FsmOwnerDefault sceneByGameObject;
 
-
 		[Tooltip("True if SceneReference resolves to a scene")]
 		[UIHint(UIHint.Variable)]
 		public FsmBool found;
@@ -47,6 +39,12 @@ namespace HutongGames.PlayMaker.Actions
 
 		[Tooltip("Event sent if SceneReference do not resolve to a scene")]
 		public FsmEvent notFoundEvent;
+
+		[Tooltip("The Scene Cache")]
+		protected Scene _scene;
+
+		[Tooltip("True if a scene was found, use _scene to access it")]
+		protected bool _sceneFound;
 
 		public override void Reset()
 		{
@@ -109,4 +107,5 @@ namespace HutongGames.PlayMaker.Actions
 		}
 	}
 }
+
 #endif

@@ -17,14 +17,17 @@ namespace HutongGames.PlayMaker.Actions
 		[Tooltip("The reference options of the source Scene")]
 		public GetSceneActionBase.SceneAllReferenceOptions sourceReference;
 
-		[Tooltip("The destination scene Index.")]
+		[Tooltip("The source scene Index.")]
 		public FsmInt sourceAtIndex;
 
-		[Tooltip("The destination scene Name.")]
+		[Tooltip("The source scene Name.")]
 		public FsmString sourceByName;
 
-		[Tooltip("The destination scene Path.")]
+		[Tooltip("The source scene Path.")]
 		public FsmString sourceByPath;
+
+		[Tooltip("The source scene from GameObject")]
+		public FsmOwnerDefault sourceByGameObject;
 
 		[ActionSection("Destination")]
 		[Tooltip("The reference options of the destination Scene")]
@@ -38,6 +41,9 @@ namespace HutongGames.PlayMaker.Actions
 
 		[Tooltip("The destination scene Path.")]
 		public FsmString destinationByPath;
+
+		[Tooltip("The destination scene from GameObject")]
+		public FsmOwnerDefault destinationByGameObject;
 
 		[ActionSection("Result")]
 		[Tooltip("True if the merge succeeded")]
@@ -62,11 +68,13 @@ namespace HutongGames.PlayMaker.Actions
 			sourceByPath = null;
 			sourceByName = null;
 			sourceAtIndex = null;
+			sourceByGameObject = null;
 
 			destinationReference = GetSceneActionBase.SceneAllReferenceOptions.ActiveScene;
 			destinationByPath = null;
 			destinationByName = null;
 			destinationAtIndex = null;
+			destinationByGameObject = null;
 
 			success = null;
 			successEvent = null;

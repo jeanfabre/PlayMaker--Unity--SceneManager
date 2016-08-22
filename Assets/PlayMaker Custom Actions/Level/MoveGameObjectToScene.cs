@@ -12,7 +12,6 @@ namespace HutongGames.PlayMaker.Actions
 	[Tooltip("Move a GameObject from its current scene to a new scene. It is required that the GameObject is at the root of its current scene.")]
 	public class MoveGameObjectToScene : FsmStateAction
 	{
-
 		[RequiredField]
 		[Tooltip("The Root GameObject to move to the referenced scene")]
 		public FsmOwnerDefault gameObject;
@@ -93,9 +92,7 @@ namespace HutongGames.PlayMaker.Actions
 				}
 
 			}
-
 		}
-
 	}
 }
 

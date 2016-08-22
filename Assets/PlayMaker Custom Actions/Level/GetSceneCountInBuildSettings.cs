@@ -33,8 +33,6 @@ namespace HutongGames.PlayMaker.Actions
 		{
 			sceneCountInBuildSettings.Value =	SceneManager.sceneCountInBuildSettings;
 		}
-
 	}
 }
-
 #endif

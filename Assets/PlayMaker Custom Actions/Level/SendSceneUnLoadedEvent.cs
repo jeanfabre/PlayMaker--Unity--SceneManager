@@ -15,7 +15,6 @@ namespace HutongGames.PlayMaker.Actions
 		[RequiredField]
 		[Tooltip("The event to send when scene was unloaded")]
 		public FsmEvent sceneUnloaded;
-
 	
 		public override void Reset()
 		{
@@ -29,7 +28,6 @@ namespace HutongGames.PlayMaker.Actions
 			Finish();
 		}
 
-
 		void SceneManager_sceneUnloaded (Scene arg0)
 		{
 			Log ("Scene " + arg0.name );
@@ -42,7 +40,6 @@ namespace HutongGames.PlayMaker.Actions
 		{
 			SceneManager.sceneUnloaded -= SceneManager_sceneUnloaded;
 		}
-
 	}
 }
 

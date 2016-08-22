@@ -31,9 +31,14 @@ public class LoadSceneAsynchCustomEditor : CustomActionEditor
 		EditField("operationPriority");
 
 
-		EditField("isDone");
+
+		EditField ("aSyncOperationHashCode");
 		EditField("progress");
+		EditField("pendingActivation");
+		EditField("isDone");
+
 		EditField("doneEvent");
+		EditField("pendingActivationEvent");
 		EditField("sceneNotFoundEvent");
 
 		return GUI.changed;

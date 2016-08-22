@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 namespace HutongGames.PlayMaker.Actions
 {
 	[ActionCategory("SceneManager")]
-	[Tooltip("Get the total number of scenes.\nThe number of currently loaded scenes will be returned.")]
+	[Tooltip("Get the total number of currently loaded scenes.")]
 	public class GetSceneCount : FsmStateAction
 	{
 		[RequiredField]
@@ -44,7 +44,6 @@ namespace HutongGames.PlayMaker.Actions
 		{
 			sceneCount.Value =	SceneManager.sceneCount;
 		}
-
 	}
 }
 

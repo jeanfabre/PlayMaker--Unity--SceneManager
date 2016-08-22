@@ -12,7 +12,6 @@ namespace HutongGames.PlayMaker.Actions
 	[Tooltip("Returns the index of a scene in the Build Settings. Always returns -1 if the scene was loaded through an AssetBundle.")]
 	public class GetSceneBuildIndex : GetSceneActionBase
 	{
-
 		[ActionSection("Result")]
 
 		[Tooltip("The scene Build Index")]
@@ -20,18 +19,17 @@ namespace HutongGames.PlayMaker.Actions
 		[UIHint(UIHint.Variable)]
 		public FsmInt buildIndex;
 
-
 		public override void Reset()
 		{
 			base.Reset ();
 
 			buildIndex = null;
-
 		}
 
 		public override void OnEnter()
 		{
 			base.OnEnter ();
+
 			DoGetSceneBuildIndex();
 
 			Finish();
@@ -51,5 +49,5 @@ namespace HutongGames.PlayMaker.Actions
 		}
 	}
 }
-#endif
 
+#endif

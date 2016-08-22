@@ -23,7 +23,6 @@ namespace HutongGames.PlayMaker.Actions
 
 		[Tooltip("Event sent if the scene is unmodified.")]
 		public FsmEvent isNotDirtyEvent;
-
 	
 		public override void Reset()
 		{
@@ -35,6 +34,7 @@ namespace HutongGames.PlayMaker.Actions
 		public override void OnEnter()
 		{
 			base.OnEnter ();
+
 			DoGetSceneIsDirty();
 
 			Finish();

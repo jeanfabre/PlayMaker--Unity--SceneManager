@@ -16,8 +16,6 @@ namespace HutongGames.PlayMaker.Actions
 		[Tooltip("The event to send when an active scene changed")]
 		public FsmEvent activeSceneChanged;
 
-
-
 		public override void Reset()
 		{
 			activeSceneChanged = null;
@@ -43,7 +41,6 @@ namespace HutongGames.PlayMaker.Actions
 		{
 			SceneManager.activeSceneChanged -= SceneManager_activeSceneChanged;
 		}
-
 	}
 }
 

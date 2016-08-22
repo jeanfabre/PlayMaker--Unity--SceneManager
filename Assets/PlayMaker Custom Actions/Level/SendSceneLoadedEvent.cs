@@ -16,7 +16,6 @@ namespace HutongGames.PlayMaker.Actions
 		[Tooltip("The event to send when a scene was loaded")]
 		public FsmEvent sceneLoaded;
 
-	
 		public override void Reset()
 		{
 			sceneLoaded = null;

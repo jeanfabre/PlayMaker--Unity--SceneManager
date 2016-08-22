@@ -12,7 +12,6 @@ namespace HutongGames.PlayMaker.Actions
 	[Tooltip("Set the scene to be active.")]
 	public class SetActiveScene : FsmStateAction
 	{
-		
 		[Tooltip("The reference options of the Scene")]
 		public GetSceneActionBase.SceneReferenceOptions sceneReference;
 
@@ -104,7 +103,6 @@ namespace HutongGames.PlayMaker.Actions
 			}
 
 		}
-
 	}
 }
 
