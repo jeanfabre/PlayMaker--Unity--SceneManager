@@ -20,12 +20,15 @@ namespace HutongGames.PlayMaker.Actions
 		[ArrayEditor(VariableType.GameObject)]
 		public FsmArray rootGameObjects;
 
-	
+		[Tooltip("Repeat every Frame")]
+		public bool everyFrame;
+
 		public override void Reset()
 		{
 			base.Reset ();
 
 			rootGameObjects = null;
+			everyFrame = false;
 		}
 
 		public override void OnEnter()
@@ -34,7 +37,13 @@ namespace HutongGames.PlayMaker.Actions
 
 			DoGetSceneRootGameObjects();
 
-			Finish();
+			if (!everyFrame)
+				Finish();
+		}
+
+		public override void OnUpdate()
+		{
+			DoGetSceneRootGameObjects();
 		}
 
 		void DoGetSceneRootGameObjects()
@@ -47,7 +56,7 @@ namespace HutongGames.PlayMaker.Actions
 				rootGameObjects.Values = _scene.GetRootGameObjects();
 			}
 
-			Fsm.Event(foundEvent);
+			Fsm.Event(sceneFoundEvent);
 		}
 	}
 }

@@ -67,7 +67,7 @@ namespace HutongGames.PlayMaker.Actions
 					Fsm.Event(failureEvent);
 				}
 
-				Fsm.Event(foundEvent);
+				Fsm.Event(sceneFoundEvent);
 
 				_go = null;
 			}

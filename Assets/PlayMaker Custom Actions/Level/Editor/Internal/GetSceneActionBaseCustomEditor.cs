@@ -44,9 +44,9 @@ public class GetSceneActionBaseCustomEditor : CustomActionEditor {
 
 	public void EditSceneReferenceResultFields()
 	{
-		EditField ("found");
-		EditField ("foundEvent");
-		EditField ("notFoundEvent");
+		EditField ("sceneFound");
+		EditField ("sceneFoundEvent");
+		EditField ("sceneNotFoundEvent");
 	}
 
 

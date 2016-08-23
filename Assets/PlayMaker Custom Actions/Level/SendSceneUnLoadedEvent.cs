@@ -16,6 +16,8 @@ namespace HutongGames.PlayMaker.Actions
 		[Tooltip("The event to send when scene was unloaded")]
 		public FsmEvent sceneUnloaded;
 	
+		public static Scene lastUnLoadedScene;
+
 		public override void Reset()
 		{
 			sceneUnloaded = null;
@@ -28,9 +30,12 @@ namespace HutongGames.PlayMaker.Actions
 			Finish();
 		}
 
-		void SceneManager_sceneUnloaded (Scene arg0)
+		void SceneManager_sceneUnloaded (Scene scene)
 		{
-			Log ("Scene " + arg0.name );
+			UnityEngine.Debug.Log(scene.name);
+
+			lastUnLoadedScene = scene;
+
 			Fsm.Event (sceneUnloaded);
 
 			Finish ();

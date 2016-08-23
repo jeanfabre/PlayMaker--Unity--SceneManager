@@ -19,12 +19,15 @@ namespace HutongGames.PlayMaker.Actions
 		[UIHint(UIHint.Variable)]
 		public FsmInt rootCount;
 
+		[Tooltip("Repeat every frame")]
+		public bool everyFrame;
 	
 		public override void Reset()
 		{
 			base.Reset ();
 
 			rootCount = null;
+			everyFrame = false;
 		}
 
 		public override void OnEnter()
@@ -33,7 +36,13 @@ namespace HutongGames.PlayMaker.Actions
 
 			DoGetSceneRootCount();
 
-			Finish();
+			if (!everyFrame)
+				Finish();
+		}
+
+		public override void OnUpdate()
+		{
+			DoGetSceneRootCount();
 		}
 
 		void DoGetSceneRootCount()
@@ -46,7 +55,7 @@ namespace HutongGames.PlayMaker.Actions
 				rootCount.Value = _scene.rootCount;
 			}
 
-			Fsm.Event(foundEvent);
+			Fsm.Event(sceneFoundEvent);
 		}
 	}
 }

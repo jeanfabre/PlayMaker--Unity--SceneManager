@@ -9,12 +9,20 @@ using UnityEngine.SceneManagement;
 namespace HutongGames.PlayMaker.Actions
 {
 	[ActionCategory("SceneManager")]
-	[Tooltip("Send an event when a scene was loaded.")]
+	[Tooltip("Send an event when a scene was loaded. Use the Safe version when you want to access content of the loaded scene. Use GetSceneloadedEventData to find out about the loaded Scene and load mode")]
 	public class SendSceneLoadedEvent : FsmStateAction
 	{
-		[RequiredField]
+
 		[Tooltip("The event to send when a scene was loaded")]
 		public FsmEvent sceneLoaded;
+
+		[Tooltip("The event to send when a scene was loaded, with a one frame delay to make sure the scene content was indeed intitialized fully")]
+		public FsmEvent sceneLoadedSafe;
+
+		public static Scene lastLoadedScene;
+		public static LoadSceneMode lastLoadedMode;
+
+		int _loaded = -1;
 
 		public override void Reset()
 		{
@@ -23,22 +31,46 @@ namespace HutongGames.PlayMaker.Actions
 
 		public override void OnEnter()
 		{
+			_loaded = -1;
 			SceneManager.sceneLoaded += SceneManager_sceneLoaded;
-
-			Finish();
 		}
 
-		void SceneManager_sceneLoaded (Scene arg0, LoadSceneMode arg1)
+		void SceneManager_sceneLoaded (Scene scene, LoadSceneMode mode)
 		{
-			Log ("Scene 0 " + arg0.name + " LoadSceneMode 1" + arg1);
+			lastLoadedScene = scene;
+			lastLoadedMode = mode;
 			Fsm.Event (sceneLoaded);
 
-			Finish ();
+			_loaded = Time.frameCount;
+
+			if (sceneLoadedSafe == null) {
+				Finish ();
+			}
 		}
+		public override void OnUpdate()
+		{
+
+			if (_loaded>-1 && Time.frameCount>_loaded) {
+				_loaded = -1;
+				Fsm.Event (sceneLoadedSafe);
+				Finish ();
+			}
+
+		}
+
 
 		public override void OnExit()
 		{
 			SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
+		}
+
+		public override string ErrorCheck()
+		{
+			if (sceneLoaded == null && sceneLoadedSafe == null) {
+				return "At least one event setup is required";
+			}
+
+			return string.Empty;
 		}
 
 	}

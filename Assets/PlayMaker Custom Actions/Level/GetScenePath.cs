@@ -46,7 +46,7 @@ namespace HutongGames.PlayMaker.Actions
 				path.Value = _scene.path;
 			}
 
-			Fsm.Event(foundEvent);
+			Fsm.Event(sceneFoundEvent);
 		}
 	}
 }

@@ -32,13 +32,13 @@ namespace HutongGames.PlayMaker.Actions
 
 		[Tooltip("True if SceneReference resolves to a scene")]
 		[UIHint(UIHint.Variable)]
-		public FsmBool found;
+		public FsmBool sceneFound;
 
 		[Tooltip("Event sent if SceneReference resolves to a scene")]
-		public FsmEvent foundEvent;
+		public FsmEvent sceneFoundEvent;
 
 		[Tooltip("Event sent if SceneReference do not resolve to a scene")]
-		public FsmEvent notFoundEvent;
+		public FsmEvent sceneNotFoundEvent;
 
 		[Tooltip("The Scene Cache")]
 		protected Scene _scene;
@@ -57,9 +57,9 @@ namespace HutongGames.PlayMaker.Actions
 			sceneByPath = null;
 			sceneByGameObject = null;
 
-			found = null;
-			foundEvent = null;
-			notFoundEvent = null;
+			sceneFound = null;
+			sceneFoundEvent = null;
+			sceneNotFoundEvent = null;
 		}
 
 		public override void OnEnter()
@@ -94,14 +94,14 @@ namespace HutongGames.PlayMaker.Actions
 				
 			if (_scene == new Scene()) {
 				_sceneFound = false;
-				if (!found.IsNone) {
-					found.Value = false;
+				if (!sceneFound.IsNone) {
+					sceneFound.Value = false;
 				}
-				Fsm.Event(notFoundEvent);
+				Fsm.Event(sceneNotFoundEvent);
 			} else {
 				_sceneFound = true;
-				if (!found.IsNone) {
-					found.Value = true;
+				if (!sceneFound.IsNone) {
+					sceneFound.Value = true;
 				}
 			}
 		}

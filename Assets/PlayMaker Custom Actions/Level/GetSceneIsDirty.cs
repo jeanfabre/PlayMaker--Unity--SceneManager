@@ -24,11 +24,16 @@ namespace HutongGames.PlayMaker.Actions
 		[Tooltip("Event sent if the scene is unmodified.")]
 		public FsmEvent isNotDirtyEvent;
 	
+		[Tooltip("Repeat every frame")]
+		public bool everyFrame;
+
 		public override void Reset()
 		{
 			base.Reset ();
 
 			isDirty = null;
+
+			everyFrame = false;
 		}
 
 		public override void OnEnter()
@@ -37,8 +42,15 @@ namespace HutongGames.PlayMaker.Actions
 
 			DoGetSceneIsDirty();
 
-			Finish();
+			if (!everyFrame)
+				Finish();
 		}
+
+		public override void OnUpdate()
+		{
+			DoGetSceneIsDirty();
+		}
+
 
 		void DoGetSceneIsDirty()
 		{
@@ -50,7 +62,7 @@ namespace HutongGames.PlayMaker.Actions
 				isDirty.Value = _scene.isDirty;
 			}
 
-			Fsm.Event(foundEvent);
+			Fsm.Event(sceneFoundEvent);
 		}
 	}
 }

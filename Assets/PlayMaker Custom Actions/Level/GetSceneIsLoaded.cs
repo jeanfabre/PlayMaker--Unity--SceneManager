@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 namespace HutongGames.PlayMaker.Actions
 {
 	[ActionCategory("SceneManager")]
-	[Tooltip("Get a scene isLoaded flag. true if the scene is modified. ")]
+	[Tooltip("Get a scene isLoaded flag. ")]
 	public class GetSceneIsLoaded : GetSceneActionBase
 	{
 		[ActionSection("Result")]
@@ -24,12 +24,15 @@ namespace HutongGames.PlayMaker.Actions
 		[Tooltip("Event sent if the scene is not loaded.")]
 		public FsmEvent isNotLoadedEvent;
 
+		[Tooltip("Repeat every Frame")]
+		public bool everyFrame;
 	
 		public override void Reset()
 		{
 			base.Reset ();
 
 			isLoaded = null;
+			everyFrame = false;
 		}
 
 		public override void OnEnter()
@@ -37,7 +40,13 @@ namespace HutongGames.PlayMaker.Actions
 			base.OnEnter ();
 			DoGetSceneIsLoaded();
 
-			Finish();
+			if (!everyFrame)
+				Finish();
+		}
+
+		public override void OnUpdate()
+		{
+			DoGetSceneIsLoaded();
 		}
 
 		void DoGetSceneIsLoaded()
@@ -50,7 +59,7 @@ namespace HutongGames.PlayMaker.Actions
 				isLoaded.Value = _scene.isLoaded;
 			}
 
-			Fsm.Event(foundEvent);
+			Fsm.Event(sceneFoundEvent);
 		}
 	}
 }

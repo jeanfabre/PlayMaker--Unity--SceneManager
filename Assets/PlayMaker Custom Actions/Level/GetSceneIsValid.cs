@@ -22,7 +22,7 @@ namespace HutongGames.PlayMaker.Actions
 		public FsmEvent isValidEvent;
 
 		[Tooltip("Event sent if the scene is not valid.")]
-		public FsmEvent isNozValidEvent;
+		public FsmEvent isNotValidEvent;
 
 	
 		public override void Reset()
@@ -50,7 +50,13 @@ namespace HutongGames.PlayMaker.Actions
 				isValid.Value = _scene.IsValid();
 			}
 
-			Fsm.Event(foundEvent);
+			if (_scene.IsValid ()) {
+				Fsm.Event (isValidEvent);
+			}else{
+				Fsm.Event (isNotValidEvent);
+			}
+
+			Fsm.Event(sceneFoundEvent);
 		}
 	}
 }

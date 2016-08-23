@@ -12,17 +12,26 @@ namespace HutongGames.PlayMaker.Actions
 	[Tooltip("Set the scene to be active.")]
 	public class SetActiveScene : FsmStateAction
 	{
+		public enum SceneReferenceOptions {SceneAtBuildIndex,SceneAtIndex,SceneByName,SceneByPath,SceneByGameObject};
+
+
 		[Tooltip("The reference options of the Scene")]
-		public GetSceneActionBase.SceneReferenceOptions sceneReference;
+		public SceneReferenceOptions sceneReference;
 
-		[Tooltip("The path of the scene to load.")]
-		public FsmString sceneByPath;
-
-		[Tooltip("The name of the scene to load.")]
+		[Tooltip("The name of the scene to activate. The given sceneName can either be the last part of the path, without .unity extension or the full path still without the .unity extension")]
 		public FsmString sceneByName;
 
-		[Tooltip("The index of the scene to load.")]
+		[Tooltip("The build index of the scene to activate.")]
+		public FsmInt sceneAtBuildIndex;
+
+		[Tooltip("The index of the scene to activae.")]
 		public FsmInt sceneAtIndex;
+
+		[Tooltip("The scene Path.")]
+		public FsmString sceneByPath;
+
+		[Tooltip("The GameObject scene to activate")]
+		public FsmOwnerDefault sceneByGameObject;
 
 
 		[ActionSection("Result")]
@@ -34,74 +43,92 @@ namespace HutongGames.PlayMaker.Actions
 		[Tooltip("Event sent if setActive succedded ")]
 		public FsmEvent successEvent;
 
-		[Tooltip("Event sent if scene not loaded yet")]
+		[Tooltip("True if SceneReference resolves to a scene")]
 		[UIHint(UIHint.Variable)]
-		public FsmEvent sceneNotLoadedEvent;
+		public FsmBool sceneFound;
+
+		[Tooltip("Event sent if scene not activated yet")]
+		[UIHint(UIHint.Variable)]
+		public FsmEvent sceneNotActivatedEvent;
 
 		[Tooltip("Event sent if SceneReference do not resolve to a scene")]
 		public FsmEvent sceneNotFoundEvent;
 
 		Scene _scene;
 		bool _sceneFound;
+		bool _success;
 
 		public override void Reset()
 		{
-			sceneReference = GetSceneActionBase.SceneReferenceOptions.SceneAtIndex;
-			sceneByPath = null;
+			sceneReference = SceneReferenceOptions.SceneAtIndex;
 			sceneByName = null;
+			sceneAtBuildIndex = null;
 			sceneAtIndex = null;
+			sceneByPath = null;
+			sceneByGameObject = null;
 
 			success = null;
 			successEvent = null;
-			sceneNotLoadedEvent = null;
+			sceneFound = null;
+			sceneNotActivatedEvent = null;
 			sceneNotFoundEvent = null;
 		}
 
 		public override void OnEnter()
 		{
-			GetScene ();
+			DoSetActivate ();
 
-			if (_sceneFound) {
-
-				bool _result = SceneManager.SetActiveScene (_scene);
-				if (!success.IsNone)  success.Value = _result;
-				if (!_result) {
-					Fsm.Event (sceneNotLoadedEvent);
-				} else {
-					Fsm.Event(successEvent);
-				}
-					
+			if (!success.IsNone) {
+				success.Value = _success;
 			}
 
-			Finish();
+			if (!sceneFound.IsNone) {
+				sceneFound.Value = true;
+			}
+
+			if (_success) {
+				Fsm.Event (successEvent);
+			}
+
 		}
 
-		void GetScene()
+		void DoSetActivate()
 		{
 			try{
 				switch (sceneReference) {
-				case GetSceneActionBase.SceneReferenceOptions.SceneAtIndex:
+				case SceneReferenceOptions.SceneAtIndex:
 					_scene = SceneManager.GetSceneAt (sceneAtIndex.Value);	
 					break;
-				case GetSceneActionBase.SceneReferenceOptions.SceneByName:
+				case SceneReferenceOptions.SceneByName:
 					_scene = SceneManager.GetSceneByName (sceneByName.Value);
 					break;
-				case GetSceneActionBase.SceneReferenceOptions.SceneByPath:
+				case SceneReferenceOptions.SceneByPath:
 					_scene = SceneManager.GetSceneByPath (sceneByPath.Value);
+					break;
+				case SceneReferenceOptions.SceneByGameObject:
+					GameObject _go = Fsm.GetOwnerDefaultTarget (sceneByGameObject);
+					if (_go==null)
+					{
+						throw new  Exception ("Null GameObject");
+					}else{
+						_scene =_go.scene;
+					}
 					break;
 				}
 			}catch(Exception e) {
 				LogError (e.Message);
+				_sceneFound = false;
+				Fsm.Event(sceneNotFoundEvent);
+				return;
 			}
 
 			if (_scene == new Scene()) {
 				_sceneFound = false;
-				if (!success.IsNone) success.Value = false;
 				Fsm.Event(sceneNotFoundEvent);
 			} else {
+				_success = SceneManager.SetActiveScene (_scene);
 				_sceneFound = true;
 			}
-
 		}
 	}
 }

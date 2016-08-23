@@ -16,6 +16,9 @@ namespace HutongGames.PlayMaker.Actions
 		[Tooltip("The event to send when an active scene changed")]
 		public FsmEvent activeSceneChanged;
 
+		public static Scene lastPreviousActiveScene;
+		public static Scene lastNewActiveScene;
+
 		public override void Reset()
 		{
 			activeSceneChanged = null;
@@ -28,12 +31,14 @@ namespace HutongGames.PlayMaker.Actions
 			Finish();
 		}
 
-		void SceneManager_activeSceneChanged (Scene arg0, Scene arg1)
+		void SceneManager_activeSceneChanged (Scene previousActiveScene , Scene activeScene)
 		{
 
-			Log ("Scene 0 " + arg0.name + " Scene 1" + arg1.name);
-			
+			lastNewActiveScene = activeScene;
+			lastPreviousActiveScene = previousActiveScene;
+
 			Fsm.Event (activeSceneChanged);
+
 			Finish ();
 		}
 
