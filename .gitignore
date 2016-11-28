@@ -18,7 +18,8 @@ sysinfo.txt
 
 Temp/
 
-/Assets/PlayMaker/
+/Assets/PlayMaker/Editor
+/Assets/PlayMaker/Versions
 /Assets/iTween/
 /Assets/Gizmos/
 
