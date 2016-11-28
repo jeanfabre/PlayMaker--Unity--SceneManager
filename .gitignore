@@ -18,8 +18,8 @@ sysinfo.txt
 
 Temp/
 
-/Assets/PlayMaker/Editor
-/Assets/PlayMaker/Versions
+/Assets/PlayMaker/Editor/
+/Assets/PlayMaker/Versions/
 /Assets/iTween/
 /Assets/Gizmos/
 
@@ -36,9 +36,10 @@ Assets/Plugins/PlayMaker
 PlayMaker.meta
 iTween.meta
 
+
 /Builds/
 
 Assets/UnityVS
 Assets/Plugins
 Assets/CodeStage
-PlayMaker
+/PlayMaker/
